@@ -33,11 +33,38 @@ io.on('connection', (socket) => {
 });
 */
 
+let userCount = 0;
+
 io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
+  userCount++;
+  io.emit('update users', userCount);
+
+  console.log('A user connected');
+
+  socket.on('user connected', (username) => {
+    console.log(`${username} joined the chat`);
+    socket.username = username; // Guardar el nombre en el socket
+  });
+
+  socket.on('chat message', ({ username, message }) => {
+    io.emit('chat message', { username, message });
+  });
+
+  socket.on('typing', (username) => {
+    socket.broadcast.emit('typing', username);
+  });
+
+  socket.on('stop typing', () => {
+    socket.broadcast.emit('stop typing');
+  });
+
+  socket.on('disconnect', () => {
+    userCount--;
+    io.emit('update users', userCount);
+    console.log(`${socket.username || 'A user'} disconnected`);
   });
 });
+
 
 server.listen(3000, () => {
   console.log('server running at http://localhost:3000');
