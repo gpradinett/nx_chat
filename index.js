@@ -4,8 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io'; // npm install socket.io
 
-const app = express();
-const server = createServer(app);
+const app = express(); // Instancia de Express para manejar rutas y middleware.
+const server = createServer(app); // Servidor HTTP creado con createServer para ser compatible con Socket.IO.
 const io = new Server(server, {
   connectionStateRecovery: {
     // Configuración para la recuperación del estado
@@ -14,7 +14,7 @@ const io = new Server(server, {
   },
 });
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url)); // Ruta del directorio actual donde está el archivo.
 
 // Servir el archivo HTML principal
 app.get('/', (req, res) => {
@@ -22,18 +22,18 @@ app.get('/', (req, res) => {
 });
 
 // Variables globales para la gestión de usuarios
-let userCount = 0;
+let userCount = 0; // Número total de usuarios conectados.
 const connectedUsers = {}; // Objeto para rastrear usuarios conectados
 
 // Configuración de eventos de Socket.IO
-io.on('connection', (socket) => {
-  userCount++;
+io.on('connection', (socket) => { //Se ejecuta cada vez que un cliente se conecta.
+  userCount++; //Incrementa el contador de usuarios y notifica a todos los clientes (io.emit) el número actualizado.
   io.emit('update users', userCount); // Emitir el número actualizado de usuarios
 
   console.log('A user connected');
 
   // Evento: Usuario conectado
-  socket.on('user connected', (username) => {
+  socket.on('user connected', (username) => { // Escucha el evento user connected enviado por un cliente con su nombre de usuario.
     connectedUsers[socket.id] = username; // Guardar usuario con el ID del socket
     console.log(`${username} joined the chat`);
     io.emit('user reconnected', username); // Notificar a otros usuarios
@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
 
   // Evento: Mensaje de chat
   socket.on('chat message', ({ username, message }) => {
-    io.emit('chat message', { username, message }); // Enviar mensaje a todos los clientes
+    io.emit('chat message', { username, message }); // Recibe un mensaje y lo enviar mensaje a todos los clientes
   });
 
   // Evento: Usuario está escribiendo
