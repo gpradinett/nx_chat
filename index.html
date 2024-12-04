@@ -8,112 +8,198 @@
   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f8f9fa;
-      transition: background-color 0.3s, color 0.3s;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1d1d1d, #333);
+    color: #f0f0f0;
+    transition: background 0.3s, color 0.3s;
     }
 
     .dark-mode {
-      background-color: #121212;
-      color: white;
-    }
-
-    .dark-mode #messages {
-      background-color: #1e1e1e;
+    background: linear-gradient(135deg, #121212, #1f1f1f);
+    color: #e0e0e0;
     }
 
     #messages {
-      list-style-type: none;
-      margin: 0;
-      padding: 1rem;
-      height: calc(100vh - 6rem);
-      overflow-y: auto;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    margin: 0;
+    padding: 1rem;
+    height: calc(100vh - 6rem);
+    overflow-y: auto;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
     #messages > li {
-    padding: 0.5rem 1rem;
+    padding: 0.8rem 1rem;
     margin-bottom: 0.5rem;
-    border-radius: 0.5rem;
+    border-radius: 12px;
     max-width: 70%;
     word-wrap: break-word;
     display: flex;
     align-items: center;
+    transition: transform 0.2s;
+    }
+
+    #messages > li:hover {
+    transform: translateY(-3px);
     }
 
     .message-self {
-        align-self: flex-end;
-        background-color: #007bff;
-        color: black;
+    align-self: flex-end;
+    background: linear-gradient(135deg, #4e9efc, #007bff);
+    color: white;
     }
 
     .message-other {
-        align-self: flex-start;
-        color: black;
-    }
-
-    #messages > li:nth-child(odd) {
-      background: #007bff;
-
-    }
-
-    #messages > li:nth-child(even) {
-      background: #007bff;
-      color: black;
+    align-self: flex-start;
+    background: linear-gradient(135deg, #ffc107, #ff5722);
+    color: white;
     }
 
     #form {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #f8f9fa;
-      display: flex;
-      padding: 0.5rem 1rem;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 0.8rem 1.2rem;
+    display: flex;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.4);
     }
 
     #input {
-      flex-grow: 1;
-      border: 1px solid #ced4da;
-      border-radius: 2rem;
-      padding: 0.5rem 1rem;
+    flex-grow: 1;
+    border: none;
+    border-radius: 24px;
+    padding: 0.8rem 1.2rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #f0f0f0;
+    outline: none;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s;
+    }
+
+    #input:focus {
+    background: rgba(255, 255, 255, 0.2);
     }
 
     #form > button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 2rem;
-      padding: 0.5rem 1.5rem;
-      margin-left: 0.5rem;
+    background: linear-gradient(135deg, #8e44ad, #3498db);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 0.8rem 1.5rem;
+    margin-left: 0.8rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: transform 0.2s;
     }
 
-    #typing-status {
-      position: fixed;
-      bottom: 3.5rem;
-      left: 1rem;
-      font-size: 0.9rem;
-      color: #6c757d;
+    #form > button:hover {
+    transform: scale(1.05);
     }
 
-    #connection-status {
-      position: fixed;
-      bottom: 5.5rem;
-      left: 1rem;
-      font-size: 0.9rem;
-      color: #6c757d;
+    #themeToggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: linear-gradient(135deg, #ff5722, #ffc107);
+    border: none;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s;
+    }
+
+    #themeToggle:hover {
+    transform: scale(1.1);
+    }
+
+    #typing-status, #connection-status {
+    font-size: 0.9rem;
+    color: #b0b0b0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
 
     .avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      margin-right: 0.5rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 0.8rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
+
+    .modal-content {
+    background: linear-gradient(135deg, #1c1c1c, #2d2d2d);
+    color: #eaeaea;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.75);
+    padding: 2rem;
+    animation: modal-entry 0.4s ease-out;
+    }
+
+    .modal-header {
+        border-bottom: 2px solid #444;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .modal-title {
+        font-size: 1.7rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .modal-body {
+        padding: 1.2rem 0;
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.15);
+        color: #eaeaea;
+        border: 1px solid #666;
+        border-radius: 10px;
+        padding: 0.9rem;
+        outline: none;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+        transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+    }
+
+    #saveNameBtn {
+        background: linear-gradient(135deg, #3498db, #8e44ad);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.9rem 1.6rem;
+        cursor: pointer;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+        transition: background 0.4s, transform 0.2s, box-shadow 0.4s;
+    }
+
+    #saveNameBtn:hover {
+        transform: scale(1.08);
+        background: linear-gradient(135deg, #8e44ad, #3498db);
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.7);
+    }
+
+    
   </style>
 </head>
 <body>
@@ -228,7 +314,7 @@
 
         socket.on('user disconnected', (user) => {
             const item = document.createElement('li');
-            item.textContent = `${user} has disconnected.`;
+            item.textContent = `${user} has disconnected. 💔`;
             item.style.color = 'red';
             messages.appendChild(item);
             messages.scrollTo(0, messages.scrollHeight);
@@ -236,7 +322,7 @@
 
         socket.on('user reconnected', (user) => {
             const item = document.createElement('li');
-            item.textContent = `${user} has reconnected.`;
+            item.textContent = `${user} has reconnected. 🚀`;
             item.style.color = 'green';
             messages.appendChild(item);
             messages.scrollTo(0, messages.scrollHeight);
